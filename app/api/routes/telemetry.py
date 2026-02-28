@@ -19,9 +19,9 @@ async def receive_telemetry(
 ):
     try:
         return await TelemetryService.process(data, session)
-    except Exception:
-        raise HTTPException(500, "Internal server error")
-
+    except Exception as e:
+        logger.exception("Failed to receive telemetry")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/telemetry/{device_id}", response_model=List[Telemetry])
 async def get_telemetry_by_device(

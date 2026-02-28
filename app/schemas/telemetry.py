@@ -4,13 +4,13 @@ from typing import Optional
 
 
 class Telemetry(BaseModel):
-    device_id: str = Field(..., max_length=100, example="iot-microclimate-node-01")
+    device_id: str = Field(..., max_length=100, json_schema_extra={"example": "iot-microclimate-node-01"})
 
     temperature: float = Field(
         ...,
         ge=-40,
         le=85,
-        example=23.9,
+        json_schema_extra={"example": 24.0},
         description="Temperature in Celsius"
     )
 
@@ -18,7 +18,7 @@ class Telemetry(BaseModel):
         ...,
         ge=0,
         le=100,
-        example=62.9,
+        json_schema_extra={"example": 60.0},
         description="Relative humidity in %"
     )
 
