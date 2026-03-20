@@ -1,35 +1,62 @@
-# `version` is no longer needed in compose files v3+
-
 services:
+  db:
+    image: timescale/timescaledb:latest-pg15
+    container_name: iot_microclimate_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: telemetry_user
+      POSTGRES_PASSWORD: 123456789TELEMETRY
+      POSTGRES_DB: telemetry_user
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db-init:
+    build: .
+    container_name: iot_microclimate_db_init
+    command: python -m app.db.run_migrations
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
   api:
     build: .
     container_name: iot_microclimate_api
+    restart: unless-stopped
     ports:
       - "8000:8000"
     env_file:
       - .env
     depends_on:
-      db:
-        condition: service_healthy   # wait until the database healthcheck passes
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 5s
       retries: 3
 
-  db:
-    image: timescale/timescaledb:latest-pg15
-    container_name: iot_microclimate_db
-    environment:
-      POSTGRES_USER: telemetry_user
-      POSTGRES_PASSWORD: 123456789TELEMETRY
-      POSTGRES_DB: telemetry_user   # create a database matching the user
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iot_microclimate_grafana
+    restart: unless-stopped
     ports:
-      - "5432:5432"
-    healthcheck:
-      # specify database name too so pg_isready doesn't try to connect
-      # to the default `telemetry_user` database (otherwise you'll see
-      # FATAL logs when the DB doesn't exist yet).
-      test: ["CMD-SHELL","pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      retries: 5
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  grafana_data:
