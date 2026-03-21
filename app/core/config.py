@@ -11,12 +11,6 @@ class Settings(BaseSettings):
     RUN_DB_INIT: bool = True
     SQLALCHEMY_ECHO: bool = False
 
-    # Rate limiting (можна переналаштувати через .env)
-    IOT_RATE_LIMIT_MAX_REQUESTS: int = 120
-    IOT_RATE_LIMIT_WINDOW_SECONDS: int = 60
-    GRAFANA_RATE_LIMIT_MAX_REQUESTS: int = 240
-    GRAFANA_RATE_LIMIT_WINDOW_SECONDS: int = 60
-
     class Config:
         env_file = ".env"
 

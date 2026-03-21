@@ -6,7 +6,7 @@ import logging
 from app.schemas.telemetry import Telemetry
 from app.schemas.telemetry_stats import TelemetryStats
 from app.services.telemetry_service_v2 import TelemetryService
-from app.deps.security import verify_iot_key, verify_grafana_key
+from app.deps.security import mask_api_key, verify_iot_key, verify_grafana_key
 from app.db.deps import get_session
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,11 @@ async def receive_telemetry(
     session: AsyncSession = Depends(get_session)
 ):
     # api_key is returned by the dependency for logging purposes
-    logger.info("Received telemetry POST for device '%s' using IoT key %s", data.device_id, api_key)
+    logger.info(
+        "Received telemetry POST for device '%s' using IoT key %s",
+        data.device_id,
+        mask_api_key(api_key),
+    )
     try:
         return await TelemetryService.process(data, session)
     except Exception as e:
@@ -42,7 +46,7 @@ async def get_telemetry_by_device(
         start,
         end,
         limit,
-        api_key,
+        mask_api_key(api_key),
     )
     try:
         return await TelemetryService.get_by_device(device_id, start, end, limit, session)
@@ -66,7 +70,7 @@ async def get_telemetry_stats(
         interval,
         start,
         end,
-        api_key,
+        mask_api_key(api_key),
     )
     try:
         return await TelemetryService.get_stats(device_id, interval, start, end, session)

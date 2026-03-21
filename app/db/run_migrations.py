@@ -1,10 +1,13 @@
 import asyncio
 from app.db.database import engine
-from app.models.telemetry_model import Base
+from app.db.init_db import init_db
 
 async def run():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # One-shot DB initialization:
+    # - ensure TimescaleDB extension exists
+    # - create tables
+    # - convert table into hypertable (idempotent)
+    await init_db(engine)
 
 if __name__ == "__main__":
     asyncio.run(run())
