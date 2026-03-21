@@ -14,7 +14,7 @@ Lightweight FastAPI service for ingesting and aggregating microclimate telemetry
 - License
 
 ## Project
-This service ingests telemetry (temperature, humidity, timestamp) from devices and provides aggregated statistics in time buckets. It uses Async SQLAlchemy, TimescaleDB/Postgres (optional), and FastAPI for the HTTP API.
+This service ingests telemetry (temperature, humidity, timestamp) from devices. It uses Async SQLAlchemy, TimescaleDB/Postgres (optional), and FastAPI for the HTTP API.
 
 ## Requirements
 - Python 3.10+
@@ -74,6 +74,7 @@ Endpoints:
 		```
 	- Response: 200 with the stored telemetry payload
 
+<!-- Тимчасово вимкнено:
 - GET /telemetry/{device_id}/stats?interval=1h&start=...&end=...
 	- Description: returns time-bucketed averages for the device
 	- Query params:
@@ -87,16 +88,17 @@ Endpoints:
 			{"bucket": "2026-02-27T12:00:00Z", "avg_temperature": 23.9, "avg_humidity": 62.9}
 		]
 		```
+-->
 
 ## Testing
-A small script `scripts/test_stats.py` shows how to call the service layer directly for ad-hoc checks. Prefer running API-level tests (not included) or using `curl` / `httpie`.
+A small script `scripts/test_stats.py` is currently kept only as a placeholder while read/statistics functionality is disabled.
 
 Example curl calls:
 
 ```bash
 curl -X POST http://localhost:8000/telemetry/ -H 'Content-Type: application/json' -d '{"device_id":"iot-microclimate-node-02","temperature":24.1,"humidity":60.0}'
 
-curl 'http://localhost:8000/telemetry/iot-microclimate-node-02/stats?interval=10h'
+# GET stats endpoint is temporarily disabled.
 ```
 
 ## Contributing
