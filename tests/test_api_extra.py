@@ -8,7 +8,6 @@ from app.main import app
 def set_keys(monkeypatch):
     from app.core import config
     monkeypatch.setattr(config.settings, "IOT_API_KEY", "test-iot-key")
-    monkeypatch.setattr(config.settings, "GRAFANA_API_KEY", "test-grafana-key")
     yield
 
 
@@ -19,9 +18,9 @@ async def test_post_telemetry_invalid_data(monkeypatch):
     sample = {"device_id": "", "temperature": "hot", "humidity": -10}
 
     async def fake_process(data, session):
-        return data  # this test checks FastAPI/Pydantic validation
+        return data  
 
-    monkeypatch.setattr("app.services.telemetry_service_v2.TelemetryService.process", fake_process)
+    monkeypatch.setattr("app.services.telemetry_service.TelemetryService.process", fake_process)
 
     async def noop_init_db(engine):
         return None
@@ -63,7 +62,7 @@ async def test_post_telemetry_service_error(monkeypatch):
     async def fake_process(data, session):
         raise Exception("Something went wrong")
 
-    monkeypatch.setattr("app.services.telemetry_service_v2.TelemetryService.process", fake_process)
+    monkeypatch.setattr("app.services.telemetry_service.TelemetryService.process", fake_process)
 
     async def noop_init_db(engine):
         return None

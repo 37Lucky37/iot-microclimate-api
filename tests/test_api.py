@@ -20,7 +20,6 @@ def set_keys(monkeypatch):
     # ensure predictable API key values during tests
     from app.core import config
     monkeypatch.setattr(config.settings, "IOT_API_KEY", "test-iot-key")
-    monkeypatch.setattr(config.settings, "GRAFANA_API_KEY", "test-grafana-key")
     yield
 
 
@@ -32,7 +31,7 @@ def fake_telemetry_service(monkeypatch):
         return Telemetry(**data)
 
     monkeypatch.setattr(
-        "app.services.telemetry_service_v2.TelemetryService.process", fake_process
+        "app.services.telemetry_service.TelemetryService.process", fake_process
     )
 
 

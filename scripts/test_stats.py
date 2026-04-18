@@ -1,6 +1,6 @@
 import asyncio
 from app.db.database import AsyncSessionLocal
-from app.services.telemetry_service_v2 import TelemetryService
+from app.services.telemetry_service import TelemetryService
 
 async def main():
     async with AsyncSessionLocal() as s:

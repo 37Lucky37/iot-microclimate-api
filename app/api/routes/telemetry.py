@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 import logging
 from app.schemas.telemetry import Telemetry
-from app.services.telemetry_service_v2 import TelemetryService
+from app.services.telemetry_service import TelemetryService
 from app.deps.security import mask_api_key, verify_iot_key
 from app.db.deps import get_session
 
