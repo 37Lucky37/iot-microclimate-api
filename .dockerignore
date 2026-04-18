@@ -1,0 +1,21 @@
+.venv
+venv
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite3
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+dist/
+build/
+
+# Do not send env files / secrets into Docker build context
+.env
+.env.*
+
+# IDE / editor
+.idea/
+.vscode/
+

@@ -1,8 +1,50 @@
 services:
-   ml:
-     build: .
-     container_name: openai_ml
-     ports:
-       - "8005:8000"
-     env_file:
-       - .env
+  db:
+    image: timescale/timescaledb:latest-pg15
+    container_name: iot_microclimate_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: telemetry_user
+      POSTGRES_PASSWORD: 123456789TELEMETRY
+      POSTGRES_DB: telemetry_user
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: iot_microclimate_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      RUN_DB_INIT: "false"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iot_microclimate_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  grafana_data:
