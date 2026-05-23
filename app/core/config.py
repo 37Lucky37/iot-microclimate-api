@@ -1,10 +1,10 @@
 from pydantic_settings import BaseSettings
 
 
+
 class Settings(BaseSettings):
     DATABASE_URL: str
     IOT_API_KEY: str
-    GRAFANA_API_KEY: str
 
     # Environment / behavior
     ENV: str = "development"

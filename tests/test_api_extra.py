@@ -10,8 +10,6 @@ def set_keys(monkeypatch):
     monkeypatch.setattr(config.settings, "IOT_API_KEY", "test-iot-key")
     yield
 
-
-# -------------------- POST /telemetry edge cases -------------------- #
 @pytest.mark.asyncio
 async def test_post_telemetry_invalid_data(monkeypatch):
     """Validation check: send invalid data"""
@@ -33,11 +31,11 @@ async def test_post_telemetry_invalid_data(monkeypatch):
     async with LifespanManager(app):
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            # no key => unauthorized
+            
             r = await ac.post("/telemetry", json=sample)
             assert r.status_code == 401
 
-            # wrong key
+            
             r = await ac.post(
                 "/telemetry",
                 json=sample,
@@ -45,7 +43,7 @@ async def test_post_telemetry_invalid_data(monkeypatch):
             )
             assert r.status_code == 403
 
-            # valid key
+            
             r = await ac.post(
                 "/telemetry",
                 json=sample,
@@ -86,7 +84,3 @@ async def test_post_telemetry_service_error(monkeypatch):
             )
             assert r.status_code == 500
 
-
-# Тимчасово вимкнено, бо GET /telemetry/{device_id}/stats не використовується:
-# - test_get_stats_nonexistent_device
-# - test_get_stats_service_error
