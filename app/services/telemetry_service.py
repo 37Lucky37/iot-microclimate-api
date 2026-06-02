@@ -2,9 +2,7 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, text
 from datetime import datetime, timezone
-from typing import List, Optional
 from app.schemas.telemetry import Telemetry
-from app.schemas.telemetry_stats import TelemetryStats
 from app.models.telemetry_model import TelemetryDB
 
 logger = logging.getLogger(__name__)

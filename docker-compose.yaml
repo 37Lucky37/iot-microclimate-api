@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: telemetry_user
       POSTGRES_PASSWORD: 123456789TELEMETRY
-      POSTGRES_DB: telemetry_user
+      POSTGRES_DB: telemetry_db
     ports:
       - "5432:5432"
     volumes:
@@ -24,7 +24,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      RUN_DB_INIT: "false"
+      RUN_DB_INIT: "true"
     env_file:
       - .env
     healthcheck:

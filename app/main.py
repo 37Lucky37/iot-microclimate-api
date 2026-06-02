@@ -16,10 +16,6 @@ logging.basicConfig(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan handler замість deprecated @app.on_event("startup")
-    Тут можна запускати init_db або інші startup/shutdown задачі.
-    """
     logging.info("Starting up application...")
     if settings.RUN_DB_INIT:
         logging.info("RUN_DB_INIT is enabled, initializing database schema...")
@@ -28,20 +24,12 @@ async def lifespan(app: FastAPI):
         logging.info("RUN_DB_INIT is disabled, skipping database initialization")
     yield
     logging.info("Shutting down application...")
-    # Тут можна додати shutdown logic, якщо потрібно
-    # наприклад, закриття підключень до БД або кешу
 
 
-# Створюємо FastAPI app із lifespan
 app = FastAPI(title="IoT Microclimate API", lifespan=lifespan)
-
 
 @app.get("/health")
 async def health():
-    """
-    Простіший health-check ендпоінт.
-    Повертає 200, якщо сервіс живий і БД відповідає на SELECT 1.
-    """
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
